@@ -21,7 +21,9 @@ jobs:
       with:
         java-version: 15
         distribution: 'adopt'
-    - name: Build with Maven
+    - name: Consumer
       run: mvn -B package --file rabbitmq-consumer/pom.xml
-    - name: Build with Maven
+    - name: Producer
       run: mvn -B package --file rabbitmq-producer/pom.xml
+    - name: Testcontainers
+      run: mvn -B package --file rabbitmq-test-containers/pom.xml
