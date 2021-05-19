@@ -2,8 +2,8 @@
 # See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
 
-orbs:
-  codecov: codecov/codecov@1.0.2
+#orbs:
+#  codecov: codecov/codecov@1.2.0
 
 jobs:
   # Below is the definition of your job to build and test your app, you can rename and customize it as you want.
@@ -42,11 +42,11 @@ jobs:
           path: rabbitmq-producer/target
       - store_artifacts:
           path: rabbitmq-consumer/target
-      #
-      - codecov/upload:
-          file: rabbitmq-producer/target/site/jacoco/index.html
-      - codecov/upload:
-          file: rabbitmq-consumer/target/site/jacoco/index.html
+#      #
+#      - codecov/upload:
+#          file: rabbitmq-producer/target/site/jacoco/index.html
+#      - codecov/upload:
+#          file: rabbitmq-consumer/target/site/jacoco/index.html
 workflows:
   # Below is the definition of your workflow.
   # Inside the workflow, you provide the jobs you want to run, e.g this workflow runs the build-and-test job above.
