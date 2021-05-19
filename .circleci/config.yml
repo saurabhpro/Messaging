@@ -16,13 +16,24 @@ jobs:
       - checkout
       # Use mvn clean and package as the standard maven build phase
       - run:
-          name: Build
-          command: mvn -B -DskipTests clean package
+          name: Consumer
+          command: mvn clean -B package --file rabbitmq-consumer/pom.xml
+      - run:
+          name: Producer
+          command: mvn clean -B package --file rabbitmq-producer/pom.xml
+      - run:
+          name: Testcontainers
+          command: mvn clean -B package --file rabbitmq-test-containers/pom.xml
       # Then run your tests!
       - run:
-          name: Test
-          command: mvn test
-
+          name: Test Containers
+          command: mvn test --file rabbitmq-consumer/pom.xml
+      - run:
+          name: Test Containers
+          command: mvn test --file rabbitmq-producer/pom.xml
+      - run:
+          name: Test Containers
+          command: mvn test --file rabbitmq-test-containers/pom.xml
 workflows:
   # Below is the definition of your workflow.
   # Inside the workflow, you provide the jobs you want to run, e.g this workflow runs the build-and-test job above.
