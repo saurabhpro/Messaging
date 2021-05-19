@@ -34,9 +34,11 @@ jobs:
       - run:
           name: Test Containers
           command: mvn test --file rabbitmq-test-containers/pom.xml
-      #
+      # Upload artifacts
       - store_artifacts:
-            path: target
+          path: rabbitmq-producer/target
+      - store_artifacts:
+          path: rabbitmq-conssumer/target
 
 workflows:
   # Below is the definition of your workflow.
