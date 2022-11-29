@@ -62,7 +62,7 @@ public class MessagingApplicationIT {
         @Override
         public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
             val values = TestPropertyValues.of(
-                    "spring.rabbitmq.host=" + rabbit.getContainerIpAddress(),
+                    "spring.rabbitmq.host=" + rabbit.getHost(),
                     "spring.rabbitmq.port=" + rabbit.getMappedPort(5672)
             );
             values.applyTo(configurableApplicationContext);

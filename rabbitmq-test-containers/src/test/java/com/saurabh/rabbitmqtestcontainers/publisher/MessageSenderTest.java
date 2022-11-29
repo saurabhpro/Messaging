@@ -10,6 +10,7 @@ import static com.saurabh.rabbitmqtestcontainers.constants.Constants.TOPIC_EXCHA
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.endsWith;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 
 /**
  * Basics: Unit tests for sender and receiver
@@ -35,7 +36,7 @@ class MessageSenderTest {
     void testBroadcast() {
         assertThatCode(() -> this.subject.broadcast("Test")).doesNotThrowAnyException();
 
-        Mockito.verify(this.rabbitTemplateMock)
+        verify(this.rabbitTemplateMock)
                 .convertAndSend(eq(FANOUT_EXCHANGE_NAME), eq(""), eq("Test"));
     }
 
@@ -43,7 +44,7 @@ class MessageSenderTest {
     void testSendError() {
         assertThatCode(() -> this.subject.sendError("Test Error")).doesNotThrowAnyException();
 
-        Mockito.verify(this.rabbitTemplateMock)
+        verify(this.rabbitTemplateMock)
                 .convertAndSend(eq(TOPIC_EXCHANGE_NAME), endsWith("error"), eq("Test Error"));
     }
 }
