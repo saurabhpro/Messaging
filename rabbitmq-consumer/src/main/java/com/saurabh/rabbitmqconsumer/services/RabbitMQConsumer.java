@@ -17,7 +17,7 @@ public class RabbitMQConsumer {
     @RabbitListener(queues = "saurabh.queue")
     public void receivedMessage(Employee employee) throws InvalidSalaryException, InterruptedException {
         LOG.info("Received Message From RabbitMQ: {}", employee);
-        if (employee.getSalary() < 0) {
+        if (employee.salary() < 0) {
             throw new InvalidSalaryException();
         }
 
