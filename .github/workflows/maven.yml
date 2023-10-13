@@ -27,5 +27,3 @@ jobs:
       run: mvn -B package --file rabbitmq-producer/pom.xml
     - name: Testcontainers
       run: mvn -B package --file rabbitmq-test-containers/pom.xml
-    - name: Spring Testcontainers Demo
-      run: mvn -B package --file spring-testcontainers/build.gradle
