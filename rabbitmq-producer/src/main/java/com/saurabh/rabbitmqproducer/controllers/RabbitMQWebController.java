@@ -20,7 +20,11 @@ public class RabbitMQWebController {
 
     @PostMapping("/producer")
     public ResponseEntity<String> producer(@RequestBody Employee employee) {
-        final Employee emp = new Employee(employee.empId(), employee.empName(), employee.salary());
+        final var emp = new Employee();
+        emp.setEmpId(employee.getEmpId());
+        emp.setEmpName(employee.getEmpName());
+        emp.setSalary(employee.getSalary());
+
 
         amqpTemplate.convertAndSend("saurabhExchange", "saurabh", emp);
 
