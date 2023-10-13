@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
     scope = Employee.class)
 public class Employee {
 
-    private String empName;
-    private String empId;
+    private String name;
+    private String id;
     private int salary;
 }

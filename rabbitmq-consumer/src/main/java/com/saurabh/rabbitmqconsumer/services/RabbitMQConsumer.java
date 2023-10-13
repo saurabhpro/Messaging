@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.stereotype.Component;
 
-import java.util.concurrent.TimeUnit;
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 @Component
 public class RabbitMQConsumer {
@@ -18,9 +18,9 @@ public class RabbitMQConsumer {
     public void receivedMessage(Employee employee) throws InvalidSalaryException, InterruptedException {
         LOG.info("Received Message From RabbitMQ: {}", employee);
         if (employee.salary() < 0) {
-            throw new InvalidSalaryException();
+            throw new InvalidSalaryException(employee.salary());
         }
 
-        TimeUnit.SECONDS.sleep(30);
+        SECONDS.sleep(30);
     }
 }

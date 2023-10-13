@@ -1,8 +1,8 @@
 package com.saurabh.rabbitmqconsumer.exceptions;
 
-public class InvalidSalaryException extends Exception {
+public class InvalidSalaryException extends RuntimeException {
 
-    private static final long serialVersionUID = -3154618962130084535L;
-
-
+    public InvalidSalaryException(int salary) {
+        super("Expected salary to be >= 0, but found %s".formatted(salary));
+    }
 }

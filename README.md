@@ -28,8 +28,8 @@ todo
 curl --location --request POST 'http://localhost:7000/saurabh-rabbitmq/v1/producer' \
 --header 'Content-Type: application/json' \
 --data-raw '{
-    "empName": "Saurabh",
-    "empId": "emp111",
+    "name": "Saurabh",
+    "id": "emp111",
     "salary":-50
 }'
 ```

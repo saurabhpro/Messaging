@@ -1,13 +1,12 @@
 package com.saurabh.rabbitmqconsumer.models;
 
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import static com.google.common.base.Preconditions.checkArgument;
+import static java.util.Objects.nonNull;
 
-@JsonIdentityInfo(
-    generator = ObjectIdGenerators.IntSequenceGenerator.class,
-    property = "@id", 
-    scope = Employee.class
-)
-public record Employee(String empName, String empId, int salary) {
+public record Employee(String name, String id, int salary) {
 
+    public Employee {
+        checkArgument(nonNull(name), "name is required");
+        checkArgument(nonNull(id), "id is required");
+    }
 }
