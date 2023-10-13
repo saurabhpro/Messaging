@@ -31,5 +31,5 @@ jobs:
     - name: Setup Gradle
       uses: gradle/gradle-build-action@v2
     - name: Spring Testcontainers Demo with Gradle Wrapper
-      run: ./gradlew build
+      run: ./spring-testcontainers/gradlew build
 
