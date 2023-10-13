@@ -13,6 +13,6 @@
     </root>
 
     <logger name="org.testcontainers" level="INFO"/>
-    <logger name="com.saurabh" level="DEBUG"/>
+    <logger name="com.manerajona" level="DEBUG"/>
 
 </configuration>
