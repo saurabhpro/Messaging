@@ -22,28 +22,29 @@ public class MessagingConfig {
 
     @Bean
     public Declarables topicBindings() {
-        var topicQueue = new Queue(TOPIC_QUEUE_NAME, NON_DURABLE);
+        final var topicQueue = new Queue(TOPIC_QUEUE_NAME, NON_DURABLE);
 
-        var topicExchange = new TopicExchange(TOPIC_EXCHANGE_NAME,
-                NON_DURABLE,
-                DO_NOT_AUTO_DELETE);
+        final var topicExchange = new TopicExchange(
+            TOPIC_EXCHANGE_NAME,
+            NON_DURABLE,
+            DO_NOT_AUTO_DELETE);
 
         return new Declarables(topicQueue, topicExchange, BindingBuilder
-                .bind(topicQueue)
-                .to(topicExchange)
-                .with(BINDING_PATTERN_ERROR));
+            .bind(topicQueue)
+            .to(topicExchange)
+            .with(BINDING_PATTERN_ERROR));
     }
 
     @Bean
     public Declarables fanoutBindings() {
-        var fanoutQueue = new Queue(FANOUT_QUEUE_NAME, NON_DURABLE);
+        final var fanoutQueue = new Queue(FANOUT_QUEUE_NAME, NON_DURABLE);
 
-        var fanoutExchange = new FanoutExchange(FANOUT_EXCHANGE_NAME, NON_DURABLE,
-                DO_NOT_AUTO_DELETE);
+        final var fanoutExchange = new FanoutExchange(FANOUT_EXCHANGE_NAME, NON_DURABLE,
+            DO_NOT_AUTO_DELETE);
 
         return new Declarables(fanoutQueue, fanoutExchange, BindingBuilder
-                .bind(fanoutQueue)
-                .to(fanoutExchange));
+            .bind(fanoutQueue)
+            .to(fanoutExchange));
     }
 
 }
