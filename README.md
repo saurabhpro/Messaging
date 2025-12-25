@@ -9,6 +9,8 @@
 | Java | 25 | LTS release (Sept 2025) |
 | Spring Boot | 4.0.1 | Modular starters, Jackson 3 |
 | Spring AMQP | 4.x | `JacksonJsonMessageConverter` for Jackson 3 |
+| Spring Kafka | 4.x | `@KafkaListener` for consumers |
+| Spring Data Redis | 4.x | `GenericJacksonJsonRedisSerializer` for Jackson 3 |
 | Jackson | 3.x | New package: `tools.jackson.*` |
 | Testcontainers | 2.0.3 | JUnit 5 only, new artifact names (`testcontainers-*`) |
 | Flyway | 11.x | Requires `spring-boot-starter-flyway` + `flyway-database-postgresql` |
@@ -35,10 +37,13 @@
 | `rabbitmq-consumer` | Maven | Consumes messages from RabbitMQ queues | 8083 |
 | `rabbitmq-test-containers` | Maven | Integration tests with Testcontainers | - |
 | `spring-testcontainers` | Gradle | JPA + RabbitMQ + PostgreSQL with Testcontainers | 8080 |
+| `kafka-producer` | Gradle | REST API to publish messages to Kafka topics | 7002 |
+| `kafka-consumer` | Gradle | Consumes messages from Kafka with `@KafkaListener` | 7003 |
+| `redis-pubsub` | Gradle | Redis Pub/Sub with channels for events/notifications | 7004 |
 
 ### Prerequisites
 - Java 25 (`sdk install java 25.0.1-tem`)
-- Docker (for RabbitMQ and Testcontainers)
+- Docker (for RabbitMQ, Kafka, Redis, and Testcontainers)
 
 ### Build & Test
 ```bash
@@ -47,8 +52,11 @@ mvn -B package --file rabbitmq-producer/pom.xml
 mvn -B package --file rabbitmq-consumer/pom.xml
 mvn -B package --file rabbitmq-test-containers/pom.xml
 
-# Gradle project
+# Gradle projects
 cd spring-testcontainers && ./gradlew build
+cd kafka-producer && ./gradlew build
+cd kafka-consumer && ./gradlew build
+cd redis-pubsub && ./gradlew build
 ```
 
 ---
@@ -83,6 +91,23 @@ AMQP is an open standard messaging protocol that enables message-oriented middle
 
 This project uses **Fanout** (broadcast) and **Topic** exchanges for message distribution.
 
+## Messaging Systems Comparison
+
+| System | Protocol | Best For | Key Features |
+|--------|----------|----------|--------------|
+| **RabbitMQ** | AMQP | Task queues, RPC | Flexible routing, message acknowledgment, DLQ |
+| **Apache Kafka** | Custom | Event streaming, logs | High throughput, partitioning, replay capability |
+| **ActiveMQ** | JMS/AMQP | Enterprise integration | JMS support, wide protocol support |
+| **Redis Pub/Sub** | Custom | Real-time notifications | Low latency, simple setup, no persistence |
+| **AWS SQS** | HTTP | Cloud-native apps | Fully managed, auto-scaling, pay-per-use |
+| **Apache Pulsar** | Custom | Multi-tenant streaming | Geo-replication, tiered storage |
+
+### When to Use What
+- **RabbitMQ**: Complex routing, work queues, when message ordering per queue matters
+- **Kafka**: Event sourcing, high-throughput streaming, when replay/reprocessing is needed
+- **Redis**: Simple pub/sub, caching + messaging combo, real-time features
+- **SQS**: Serverless architectures, AWS-native applications
+
 ## publishing a message
 - we are using springboot Template
 - serializer
@@ -104,3 +129,62 @@ curl --location 'http://localhost:7001/saurabh-rabbitmq/v1/producer' \
 
 ## rabbitmq console
 - http://localhost:15672/#/queues
+
+---
+
+## To start Kafka
+```bash
+docker run -it --rm --name kafka -p 9092:9092 apache/kafka:latest
+```
+
+### curl to publish a message to Kafka
+```curl
+# Publish to default 'messages' topic
+curl --location 'http://localhost:7002/api/v1/kafka/publish' \
+--header 'Content-Type: application/json' \
+--data '{
+    "message": "Hello Kafka!",
+    "timestamp": "2025-12-25T12:00:00Z"
+}'
+
+# Publish to custom topic
+curl --location 'http://localhost:7002/api/v1/kafka/publish/my-topic' \
+--header 'Content-Type: application/json' \
+--data '{
+    "event": "user.created",
+    "userId": "12345"
+}'
+```
+
+---
+
+## To start Redis
+```bash
+docker run -it --rm --name redis -p 6379:6379 redis:7-alpine
+```
+
+### curl to publish a message to Redis Pub/Sub
+```curl
+# Publish event
+curl --location 'http://localhost:7004/api/v1/redis/event' \
+--header 'Content-Type: application/json' \
+--data '{
+    "type": "order.created",
+    "orderId": "ORD-001"
+}'
+
+# Publish notification
+curl --location 'http://localhost:7004/api/v1/redis/notification' \
+--header 'Content-Type: application/json' \
+--data '{
+    "type": "alert",
+    "message": "New order received"
+}'
+
+# Publish to custom channel
+curl --location 'http://localhost:7004/api/v1/redis/publish/my-channel' \
+--header 'Content-Type: application/json' \
+--data '{
+    "data": "custom payload"
+}'
+```

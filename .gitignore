@@ -1,3 +1,19 @@
-/.idea/
-/rabbitmq-consumer/.mvn/
-/rabbitmq-producer/.mvn/
+# IDE
+.idea/
+*.iml
+
+# Maven
+target/
+.mvn/wrapper/maven-wrapper.jar
+
+# Gradle
+build/
+.gradle/
+!gradle/wrapper/gradle-wrapper.jar
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
