@@ -3,7 +3,7 @@ package com.manerajona.testcontainers;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.postgresql.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -14,7 +14,7 @@ public interface PostgresTestContainer {
     String DOCKER_IMAGE_NAME = "postgres:16";
 
     @Container
-    PostgreSQLContainer<?> container = new PostgreSQLContainer<>(DOCKER_IMAGE_NAME);
+    PostgreSQLContainer container = new PostgreSQLContainer(DOCKER_IMAGE_NAME);
 
     @DynamicPropertySource
     static void registerProperties(DynamicPropertyRegistry registry) {

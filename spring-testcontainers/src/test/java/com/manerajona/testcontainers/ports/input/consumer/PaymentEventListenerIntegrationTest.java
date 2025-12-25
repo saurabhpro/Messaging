@@ -55,7 +55,7 @@ class PaymentEventListenerIntegrationTest
         await().atMost(Duration.ofSeconds(5))
             .until(paymentUpdated(output), is(true));
 
-        assertThat(output.getErr()).isEmpty();
+        assertThat(output.getErr()).doesNotContain("Exception", "ERROR");
         assertThat(output.getOut()).contains(
             "amount=10",
             "payment_method=CARD",

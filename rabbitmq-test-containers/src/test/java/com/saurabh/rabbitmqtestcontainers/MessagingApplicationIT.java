@@ -2,71 +2,51 @@ package com.saurabh.rabbitmqtestcontainers;
 
 import com.saurabh.rabbitmqtestcontainers.publisher.MessageSender;
 import lombok.extern.slf4j.Slf4j;
-import lombok.val;
-import org.junit.ClassRule;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.system.OutputCaptureRule;
-import org.springframework.boot.test.util.TestPropertyValues;
-import org.springframework.context.ApplicationContextInitializer;
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.boot.test.system.CapturedOutput;
+import org.springframework.boot.test.system.OutputCaptureExtension;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.util.concurrent.Callable;
-import java.util.concurrent.TimeUnit;
+import java.time.Duration;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 import static org.hamcrest.CoreMatchers.is;
 
-/**
- * This is still in Junit4 as it was super difficult to upgrade to 5
- */
 @Slf4j
-@RunWith(SpringRunner.class) // required for autowiring
 @SpringBootTest
-@ContextConfiguration(initializers = MessagingApplicationIT.Initializer.class)
+@Testcontainers
+@ExtendWith(OutputCaptureExtension.class)
 public class MessagingApplicationIT {
 
-    @ClassRule
-    public static GenericContainer<?> rabbit = new GenericContainer<>("rabbitmq:3-management")
+    @Container
+    static GenericContainer<?> rabbit = new GenericContainer<>("rabbitmq:3-management")
             .withExposedPorts(5672, 15672);
 
-    /**
-     * OutputCapture is a JUnit Extension that you can use to capture System.out and System.err output.
-     */
-    @Rule
-    public OutputCaptureRule output = new OutputCaptureRule();
+    @DynamicPropertySource
+    static void registerProperties(DynamicPropertyRegistry registry) {
+        registry.add("spring.rabbitmq.host", rabbit::getHost);
+        registry.add("spring.rabbitmq.port", () -> rabbit.getMappedPort(5672));
+    }
 
     @Autowired
     private MessageSender messageSender;
 
     @Test
-    public void testBroadcast() {
+    void testBroadcast(CapturedOutput output) {
         log.info("Integration Testing...");
         messageSender.broadcast("Broadcast Test by Saurabh");
-        await().atMost(5, TimeUnit.SECONDS).until(isMessageConsumed(), is(true));
-    }
+        await().atMost(Duration.ofSeconds(5))
+                .until(() -> output.getOut().contains("Broadcast Test"), is(true));
 
-    private Callable<Boolean> isMessageConsumed() {
-        return () -> output.toString().contains("Broadcast Test");
-    }
-
-    public static class Initializer implements
-            ApplicationContextInitializer<ConfigurableApplicationContext> {
-
-        @Override
-        public void initialize(ConfigurableApplicationContext configurableApplicationContext) {
-            val values = TestPropertyValues.of(
-                    "spring.rabbitmq.host=" + rabbit.getHost(),
-                    "spring.rabbitmq.port=" + rabbit.getMappedPort(5672)
-            );
-            values.applyTo(configurableApplicationContext);
-        }
+        assertThat(output.getOut()).contains("Broadcast Test");
     }
 }
 
