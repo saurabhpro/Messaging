@@ -1,6 +1,6 @@
 package com.saurabh.rabbitmqconsumer;
 
-import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
+import org.springframework.amqp.support.converter.JacksonJsonMessageConverter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
@@ -13,7 +13,7 @@ public class RabbitmqConsumerApplication {
     }
 
     @Bean
-    public Jackson2JsonMessageConverter converter() {
-        return new Jackson2JsonMessageConverter();
+    public JacksonJsonMessageConverter converter() {
+        return new JacksonJsonMessageConverter();
     }
 }
